@@ -1,5 +1,6 @@
 const {createHmac , randomBytes}=require('node:crypto');
 const { Schema, model }=require('mongoose');
+const { createToken }=require('../services/authentication');
 
 const userSchema=new Schema({
     fullName:{
@@ -44,7 +45,7 @@ userSchema.pre('save',function(next){
 // If you use an arrow function, the value of this will not refer to the document; instead,
 // it will inherit this from the enclosing scope, which is likely not what you want.
 
-userSchema.static('matchPassword',async function(email,password){
+userSchema.static('matchPasswordAndGenerateToken',async function(email,password){
     const user=await this.findOne({email});
     if(!user) throw new Error('User not found');
 
@@ -55,7 +56,8 @@ userSchema.static('matchPassword',async function(email,password){
 
     if(!hashedGivenPassword===hashedPassword) throw new Error('Invalid password');
 
-    return {...user, password: undefined , salt: undefined};
+    const token=createToken(user);
+    return token;
 });
 
 const User=model('User',userSchema);
