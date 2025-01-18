@@ -15,12 +15,12 @@ const userRoute=require('./routes/user');
 app.set('view engine','ejs');
 app.set('views',path.resolve('./views'));
 
+app.use(express.urlencoded({extended:true}));
+app.use("/user",userRoute);
+
 app.get('/',(req,res)=>{
     return res.render('home');
 });
-
-app.use("/users",userRoute);
-app.use(express.urlencoded({extended:true}));
 
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);
