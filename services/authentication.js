@@ -2,9 +2,9 @@ const JWT=require('jsonwebtoken');
 
 const secret="Man@123"
 
-function ceateToken(user){
+function createToken(user){
     const payload={
-        Iid:user._id,
+        _id:user._id,
         email:user.email,
         profileImageURL:user.profileImageURL,
         role:user.role
@@ -18,6 +18,6 @@ function verifyToken(token){
 }
 
 module.exports={
-    ceateToken,
+    createToken,
     verifyToken
 }
