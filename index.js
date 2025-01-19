@@ -3,6 +3,8 @@ const express=require('express');
 const mongoose=require('mongoose');
 const cookieParser=require('cookie-parser');
 const checkForAuthentication=require('./middlewares/authentication');
+const blogRoute=require('./routes/blog');
+const Blog=require('./models/blog');
 
 const app=express();
 const port=3000;
@@ -19,11 +21,14 @@ app.set('views',path.resolve('./views'));
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(checkForAuthentication('token'));
+app.use(express.static(path.resolve('./public')));
 
 app.use("/user",userRoute);
+app.use("/blog",blogRoute);
 
-app.get('/',(req,res)=>{
-    return res.render('home',{user:req.user});
+app.get('/',async(req,res)=>{
+    const allBlogs=await Blog.find({}).sort({createdAt:-1});
+    return res.render('home',{user:req.user , blogs:allBlogs});
 });
 
 app.listen(port,()=>{
