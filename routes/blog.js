@@ -27,16 +27,20 @@ router.get('/add-new',(req,res)=>{
 
 router.get('/:id',async(req,res)=>{
     const blog=await Blog.findById(req.params.id).populate('createdBy');
+    const comments=await Comment.find({blog:req.params.id}).populate('user');
     return res.render('blog',{
         blog,
+        comments,
         user:req.user
     });
 });
 
 router.post('/comment/:blogId',async(req,res)=>{
-    const {content}=req.body.content;
+    console.log('Request Body:', req.body);
+    console.log('Request Params:', req.params);
+    console.log('User:', req.user);
     const comment=Comment.create({
-        content,
+        content:req.body.content,
         user:req.user._id,
         blog:req.params.blogId
     });
